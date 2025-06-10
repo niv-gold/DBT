@@ -4,3 +4,9 @@ sources:
     schema: "{{target.schema}}_SEED_DATA"
     tables:
     - name: ABC_BANK_SECURITY_INFO
+      description: >
+        security general information to be recored in the dimension table "DIM_SECURITY"
+    - name: ABC_BANK_COUNTRY_INFO
+      description: >
+        countries the bank is in contect with, will be recoerded in the dimension table "DIM_COUNTERY"
+      
