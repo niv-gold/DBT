@@ -11,7 +11,7 @@ src_data as (
          , EXCHANGE          as EXCHANGE_CODE    -- TEXT
          , LOAD_TS           as LOAD_TS          -- TIMESTAMP_NTZ
 
-         , 'SEED.ABC_Bank_SECURITY_INFO' as RECORD_SOURCE
+         , 'SEED.ABC_BANK_SECURITY_INFO' as RECORD_SOURCE
 
     FROM {{ source('seeds', 'ABC_BANK_SECURITY_INFO') }}
  ),

@@ -4,11 +4,11 @@ models:
   - name: POSITION_ABC_BANK
     description: THe position we have i  the ABC Bank portfolio.
     columns:
-      - name: UNREALZIED_PROFIT
+      - name: UNREALIZED_PROFIT
         description: the unrealizied profit on the posiion. 
         tests:
           - not_null
-  - name: UNREALZIED_PROFIT_PCT
+  - name: UNREALIZED_PROFIT_PCT
     description: >
       The unrealized profit percentage on the position.
     tests:
