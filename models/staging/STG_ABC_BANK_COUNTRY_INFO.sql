@@ -17,7 +17,7 @@ WITH src_data as (
         ,INTERMEDIATE_REGION_CODE as INTERMEDIATE_REGION_CODE   -- NUMBER
         ,LOAD_TS as LOAD_TS                                     -- TIMESTAMP_NTZ
 
-        ,'SEED.ABC_BANK_COUNTRY_INFO' as RECORD_SOURCE          -- TEXT        
+        ,'SEEDS.ABC_BANK_COUNTRY_INFO' as RECORD_SOURCE          -- TEXT        
     FROM {{ source('seeds','ABC_BANK_COUNTRY_INFO')}}
 ),
 pre_hashed as(
@@ -75,5 +75,4 @@ union_records as(
     FROM default_record      
 )
 SELECT *
-FROM union_records 
-order by 1
+FROM union_records

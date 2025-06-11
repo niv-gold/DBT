@@ -9,4 +9,6 @@ sources:
     - name: ABC_BANK_COUNTRY_INFO
       description: >
         countries the bank is in contect with, will be recoerded in the dimension table "DIM_COUNTERY"
+    - name: ABC_BANK_CURRENCY_INFO
+      description: currencies that the bank is supporting on creating transactions
       
