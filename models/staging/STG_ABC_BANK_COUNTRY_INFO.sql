@@ -1,6 +1,4 @@
 {{ config(materialized='ephemeral') }}
-{% set na = var('na', '∅') %}
-
 
 WITH src_data as (
      SELECT 
@@ -20,33 +18,14 @@ WITH src_data as (
         ,'SEEDS.ABC_BANK_COUNTRY_INFO' as RECORD_SOURCE          -- TEXT        
     FROM {{ source('seeds','ABC_BANK_COUNTRY_INFO')}}
 ),
-pre_hashed as(
-    SELECT  
-         IFNULL(COUNTRY_NAME,'{{na}}') as COUNTRY_NAME
-        ,IFNULL(COUNTRY_CODE_2_LETTER,'{{na}}') as COUNTRY_CODE_2_LETTER
-        ,IFNULL(COUNTRY_CODE_3_LETTER,'{{na}}') as COUNTRY_CODE_3_LETTER
-        ,IFNULL(CAST(COUNTRY_CODE_NUMERIC as STRING),'{{na}}') as COUNTRY_CODE_NUMERIC
-        ,IFNULL(ISO_3166_2,'{{na}}') as ISO_3166_2
-        ,IFNULL(REGION,'{{na}}') as REGION
-        ,IFNULL(SUB_REGION,'{{na}}') as SUB_REGION
-        ,IFNULL(INTERMEDIATE_REGION,'{{na}}') as INTERMEDIATE_REGION
-        ,IFNULL(CAST(REGION_CODE as STRING),'{{na}}') as REGION_CODE
-        ,IFNULL(CAST(SUB_REGION_CODE as STRING),'{{na}}') as SUB_REGION_CODE
-        ,IFNULL(CAST(INTERMEDIATE_REGION_CODE as STRING),'{{na}}') as INTERMEDIATE_REGION_CODE
-        ,LOAD_TS
-        ,RECORD_SOURCE
-    FROM src_data
-),
 hashed as(
     SELECT 
-         src.*
-        ,HASH(concat_ws('|', hs.COUNTRY_CODE_3_LETTER)) as COUNTRY_HKEY
-        ,HASH(concat_ws('|', hs.COUNTRY_NAME,hs.COUNTRY_CODE_2_LETTER,hs.COUNTRY_CODE_3_LETTER,hs.COUNTRY_CODE_NUMERIC,
-         hs.REGION,hs.SUB_REGION,hs.INTERMEDIATE_REGION,hs.REGION_CODE,hs.SUB_REGION_CODE,hs.INTERMEDIATE_REGION_CODE)) 
-         as COUNTRY_HDIFF        
-        ,CONVERT_TIMEZONE('UTC', 'Asia/Jerusalem', hs.LOAD_TS) as LOAD_TS_UTC        
-    FROM src_data src JOIN pre_hashed hs ON 
-            src.COUNTRY_NAME = hs.COUNTRY_NAME
+         *
+        ,{{dbt_utils.surrogate_key(['COUNTRY_CODE_3_LETTER'])}} AS COUNTRY_HKEY
+        ,{{dbt_utils.surrogate_key(['COUNTRY_NAME','COUNTRY_CODE_2_LETTER','COUNTRY_CODE_3_LETTER','COUNTRY_CODE_NUMERIC','REGION', 'SUB_REGION','INTERMEDIATE_REGION','REGION_CODE','SUB_REGION_CODE','INTERMEDIATE_REGION_CODE'])}} 
+         as COUNTRY_HDIFF
+        ,CONVERT_TIMEZONE('UTC', 'Asia/Jerusalem', LOAD_TS) as LOAD_TS_UTC        
+    FROM src_data
 ),
 default_record as(
     SELECT 
@@ -63,8 +42,8 @@ default_record as(
         ,-1 as INTERMEDIATE_REGION_CODE         -- NUMBER
         ,'1900-01-01' as LOAD_TS                -- TIMESTAMP_NTZ
         ,'Missing' as RECORD_SOURCE             -- TEXT
-        ,-1 as COUNTRY_HKEY                     -- NUMBER
-        ,-1 as COUNTRY_HDIFF                    -- NUMBER
+        ,'-1' as COUNTRY_HKEY                     -- NUMBER
+        ,'-1' as COUNTRY_HDIFF                    -- NUMBER
         ,'1900-01-01' as LOAD_TS_UTC            -- TIMESTAMP_NTZ
 ),
 union_records as(

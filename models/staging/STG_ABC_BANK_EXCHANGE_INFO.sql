@@ -1,6 +1,4 @@
 {{ config(materialized='ephemeral') }}
-{% set na = var('na', '∅') %}
-
 
 WITH source_records as(
     SELECT
@@ -22,34 +20,14 @@ WITH source_records as(
         ,'SEEDS.ABC_BANK_EXCHANGE_INFO' as RECORD_SOURCE -- TEXT
     FROM {{ source('seeds','ABC_BANK_EXCHANGE_INFO') }}
 ),
-pre_hash as(
-    SELECT
-         IFNULL(CITY,'{{na}}') as CITY
-        ,IFNULL(OPEN_UTC,'{{na}}') as OPEN_UTC
-        ,IFNULL(OPEN,'{{na}}') as OPEN
-        ,IFNULL(ZONE,'{{na}}') as ZONE
-        ,IFNULL(DST_PERIOD,'{{na}}') as DST_PERIOD
-        ,IFNULL(CLOSE,'{{na}}') as CLOSE
-        ,IFNULL(ID,'{{na}}') as ID
-        ,IFNULL(LUNCH_UTC,'{{na}}') as LUNCH_UTC
-        ,IFNULL(CLOSE_UTC,'{{na}}') as CLOSE_UTC
-        ,IFNULL(NAME,'{{na}}') as NAME
-        ,IFNULL(COUNTRY,'{{na}}') as COUNTRY
-        ,IFNULL(CAST(DELTA as STRING),'{{na}}') as DELTA
-        ,IFNULL(LUNCH,'{{na}}') as LUNCH
-        ,LOAD_TS
-        ,RECORD_SOURCE
-    FROM source_records
-),
 hashed as(
     SELECT
-         src.*
-        ,HASH(concat_ws('|',sh.ID)) as EXCHANGE_HKEY
-        ,HASH(concat_ws('|',sh.CITY,sh.OPEN_UTC,sh.OPEN,sh.ZONE,sh.DST_PERIOD,sh.CLOSE,sh.LUNCH_UTC,sh.CLOSE_UTC,sh.NAME,
-                        sh.COUNTRY,sh.DELTA,sh.LUNCH)) as EXCHANGE_HDIFF
-        ,CONVERT_TIMEZONE('UTC', 'Asia/Jerusalem', sh.LOAD_TS) as LOAD_TS_UTC
-    FROM source_records src JOIN pre_hash sh ON
-            src.ID = sh.ID
+         *
+        ,{{dbt_utils.surrogate_key(['ID'])}} as EXCHANGE_HKEY        
+        ,{{dbt_utils.surrogate_key(['CITY','OPEN_UTC','OPEN','ZONE','DST_PERIOD','CLOSE','LUNCH_UTC','CLOSE_UTC','NAME',
+            'COUNTRY','DELTA','LUNCH'])}} as EXCHANGE_HDIFF        
+        ,CONVERT_TIMEZONE('UTC', 'Asia/Jerusalem', LOAD_TS) as LOAD_TS_UTC
+    FROM source_records
 ),
 default_record as (
     SELECT
@@ -68,8 +46,8 @@ default_record as (
         ,'Missing' as LUNCH        
         ,'1900-01-01' as LOAD_TS
         ,'Missing' as RECORD_SOURCE   
-        ,-1 as EXCHANGE_HKEY  
-        ,-1 as EXCHANGE_HDIFF   
+        ,'-1' as EXCHANGE_HKEY  
+        ,'-1' as EXCHANGE_HDIFF   
         ,'1900-01-01' as LOAD_TS_UTC
 ),
 union_records as(
