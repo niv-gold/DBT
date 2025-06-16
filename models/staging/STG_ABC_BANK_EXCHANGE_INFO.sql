@@ -46,7 +46,7 @@ hashed as(
          src.*
         ,HASH(concat_ws('|',sh.ID)) as EXCHANGE_HKEY
         ,HASH(concat_ws('|',sh.CITY,sh.OPEN_UTC,sh.OPEN,sh.ZONE,sh.DST_PERIOD,sh.CLOSE,sh.LUNCH_UTC,sh.CLOSE_UTC,sh.NAME,
-                        sh.COUNTRY,sh.DELTA,sh.LUNCH)) as EXCHANGE_DIFF
+                        sh.COUNTRY,sh.DELTA,sh.LUNCH)) as EXCHANGE_HDIFF
         ,CONVERT_TIMEZONE('UTC', 'Asia/Jerusalem', sh.LOAD_TS) as LOAD_TS_UTC
     FROM source_records src JOIN pre_hash sh ON
             src.ID = sh.ID
@@ -69,7 +69,7 @@ default_record as (
         ,'1900-01-01' as LOAD_TS
         ,'Missing' as RECORD_SOURCE   
         ,-1 as EXCHANGE_HKEY  
-        ,-1 as EXCHANGE_DIFF   
+        ,-1 as EXCHANGE_HDIFF   
         ,'1900-01-01' as LOAD_TS_UTC
 ),
 union_records as(

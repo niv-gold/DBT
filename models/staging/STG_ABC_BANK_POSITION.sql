@@ -6,7 +6,7 @@ WITH src_data AS (
         SYMBOL            AS SECURITY_CODE,    -- TEXT
         DESCRIPTION       AS SECURITY_NAME,    -- TEXT
         EXCHANGE          AS EXCHANGE_CODE,    -- TEXT
-        REPORT_DATE       AS REPORT_DATE,      -- DATE
+        {{to_21st_century_date('REPORT_DATE')}} AS REPORT_DATE,      -- DATE
         QUANTITY          AS QUANTITY,         -- NUMBER
         COST_BASE         AS COST_BASE,        -- NUMBER
         POSITION_VALUE    AS POSITION_VALUE,   -- NUMBER
