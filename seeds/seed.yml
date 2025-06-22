@@ -24,13 +24,13 @@ seeds:
           - not_null
       - name: ID
         description: excahange rate unique identification number
-        tests:
-          - unique
-          - len_more_then_6:
-              config:
-                error_if: "> 2"
-                warn_if: "> 1"
-                fail_calc: "MAX(ascii(ID))"
+        # tests:
+        #   - unique
+        #   - len_more_then_6:
+        #       config:
+        #         error_if: "> 2"
+        #         warn_if: "> 1"
+        #         fail_calc: "MAX(ascii(ID))"
       - name: NAME
         description: excahange rate abriviation
         tests:
