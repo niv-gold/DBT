@@ -1,0 +1,10 @@
+version: 2
+models:
+  - name: STG_ABC_BANK_POSITION
+    tests:
+      - dbt_utils.expression_is_true:
+          expression: " YEAR(REPORT_DATE) >= 2000 "
+  - name: STG_ABC_BANK_SECURITY_INFO
+    tests:
+      - dbt_utils.expression_is_true:
+          expression: " YEAR(LOAD_TS_UTC) >= 2020 "

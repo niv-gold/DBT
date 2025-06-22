@@ -93,3 +93,6 @@ SELECT {{var_a}}, {{var_b}}, {{var_c}}
 DATE between '{{start_date}}' and '{{end_date}}'
 {% endset %}
 {{date_filter}}
+
+
+{{as_sql_list(['ACCOUNT_CODE', 'SECURITY_CODE', 'SECURITY_NAME', 'EXCHANGE_CODE', 'REPORT_DATE', 'QUANTITY', 'COST_BASE', 'POSITION_VALUE', 'CURRENCY_CODE'])}}

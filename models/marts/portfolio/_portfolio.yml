@@ -1,0 +1,41 @@
+version: 2
+  
+models:
+  - name: FACT_POSITION
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - ACCOUNT_CODE
+            - SECURITY_CODE
+  - name: DIM_SECURITY
+    columns:
+      - name: SECURITY_CODE
+        tests:
+          - not_null
+          - unique
+          - has_default_key
+          - warn_on_multiple_default_key
+  - name: DIM_COUNTRY
+    columns:
+      - name: country_code_numeric
+        tests:
+          - not_null
+          - unique
+          - has_default_key
+          - warn_on_multiple_default_key
+  - name: DIM_CURRENCY
+    columns:
+      - name: numeric_code
+        tests:
+          - not_null
+          - unique
+          - has_default_key
+          - warn_on_multiple_default_key
+  - name: DIM_EXCHANGE
+    columns:
+      - name: EXCHANGE_HKEY
+        tests:
+          - not_null
+          - unique
+          - has_default_key
+          - warn_on_multiple_default_key
