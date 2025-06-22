@@ -1,0 +1,19 @@
+version: 2
+snapshots:
+  - name: SNSH_ABC_BANK_POSITION
+    description: snapshot of ABC bank positions, record the changed and new positions (SCD type 2)
+    columns:
+      - name: POSITION_HKEY
+        tests:
+          - no_hash_collision:
+              hashed_fields: >
+                {{as_sql_list(['ACCOUNT_CODE', 'SECURITY_CODE'])}}     
+              config:
+                severity: error
+      - name: POSITION_HDIFF
+        tests:
+          - no_hash_collision:
+              hashed_fields: >
+                {{as_sql_list(['ACCOUNT_CODE', 'SECURITY_CODE', 'SECURITY_NAME', 'EXCHANGE_CODE', 'REPORT_DATE', 'QUANTITY', 'COST_BASE', 'POSITION_VALUE', 'CURRENCY_CODE'])}}
+              config:
+                severity: error

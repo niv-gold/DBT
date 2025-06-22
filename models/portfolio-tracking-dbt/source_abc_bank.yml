@@ -1,7 +1,6 @@
 version: 2
 
 sources:
-
   - name: abc_bank
 
     database: PORTFOLIO_TRACKING
@@ -10,7 +9,18 @@ sources:
     tables:
       - name: ABC_BANK_POSITION
         description: The landing table holding the data imported from the CSV extracted by ABC Bank.
+        tests:
+          - dbt_utils.unique_combination_of_columns:
+              combination_of_columns:
+                - ACCOUNTID
+                - SYMBOL
         columns:
+          - name: CONCAT_WS('-', ACCOUNTID, SYMBOL)
+            description: >
+              create a pseudo-column by concatinating tow columns togethr (ACCOUNTID, SYMBOL) to checl for wide key uniqueness.
+            tests:
+              - not_null
+              - unique
           - name: ACCOUNTID
             description: The code for the account at the ABC Bank.
             tests:
@@ -18,7 +28,6 @@ sources:
           - name: SYMBOL
             description: The symbol of the security for the ABC Bank.
             tests:
-              - unique
               - not_null
           - name: DESCRIPTION
             description: The name of the security at the ABC Bank.
