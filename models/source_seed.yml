@@ -1,6 +1,15 @@
 version: 2
 sources:
   - name: seeds
+    freshness:     # set freshness SLA for all following source tables
+      error_after:
+        count: 2
+        period: day
+      warn_after:
+        count: 1
+        period: day
+    loaded_at_field: LOAD_TS
+    
     schema: "{{target.schema}}_SEED_DATA"
     tables:
     - name: ABC_BANK_SECURITY_INFO
@@ -12,5 +21,6 @@ sources:
     - name: ABC_BANK_CURRENCY_INFO
       description: currencies that the bank is supporting on creating transactions, will be recoerded in the dimension table "DIM_CURRENCY"
     - name: ABC_BANK_EXCHANGE_INFO
+      freshness: null    # no freshness for this table
       description: securities exchange markets around the world, will be recoerded in the dimension table "DIM_EXCHANGE"
       
