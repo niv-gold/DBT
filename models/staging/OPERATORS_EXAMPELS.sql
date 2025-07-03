@@ -1,3 +1,5 @@
+{{ config(enabled=false) }}
+
 --Litteral calaculations
 SELECT {{1 + 1}} -- print 2
 
