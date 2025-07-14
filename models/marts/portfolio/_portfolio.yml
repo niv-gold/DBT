@@ -7,6 +7,13 @@ models:
           combination_of_columns:
             - ACCOUNT_CODE
             - SECURITY_CODE
+    columns:
+      - name: SECURITY_CODE
+        description: The code of the security
+        tests:
+          - relationships:
+              to: ref('DIM_SECURITY')
+              field: SECURITY_CODE
   - name: DIM_SECURITY
     columns:
       - name: SECURITY_CODE
@@ -39,3 +46,5 @@ models:
           - unique
           - has_default_key
           - warn_on_multiple_default_key
+  - name: HIST_FACT_POSITION
+    description: POSITION fact table contain all recored history, update using incremental logic.

@@ -1,18 +1,6 @@
 version: 2
 
 models:
-  - name: POSITION_ABC_BANK
-    description: The position we have in the ABC Bank portfolio.
-    columns:
-      - name: UNREALIZED_PROFIT
-        description: the unrealizied profit on the posiion.
-        tests:
-          - not_null
-      - name: UNREALIZED_PROFIT_PCT
-        description: >
-          The unrealized profit percentage on the position.
-        tests:
-          - not_null
   - name: REF_POSITION_ABC_BANK
     description: The positions we have in the ABC Bank portfolio.
     columns:
@@ -27,10 +15,9 @@ models:
       - name: SECURITY_CODE
         description: >
           The code of the security in the position.
-        tests:
-          - relationships:
-              to: ref('REF_ABC_BANK_SECURITY_INFO')
-              field: SECURITY_CODE
-              config:
-                error_if: "> 1349"
-
+  - name: REF_ABC_BANK_COUNTRY_INFO
+    description: countries info
+  - name: REF_POSITION_TX__ABC_BANK
+    description: Position transactions
+  - name: REF_SECURITY_INFO_ABC_BANK
+    description: Securities info

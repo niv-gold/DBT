@@ -1,3 +1,5 @@
+{{ config(enabled=fales)}}
+
 {% snapshot SNSH_ABC_BANK_POSITION %}
 {{
     config(
