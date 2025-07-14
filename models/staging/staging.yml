@@ -8,3 +8,28 @@ models:
     tests:
       - dbt_utils.expression_is_true:
           expression: " YEAR(LOAD_TS_UTC) >= 2020 "
+  - name: HIST_ABC_BANK_POSITION
+    description: Incremental load data from csv file 'ABC_BANK_POSITION'
+    tests:
+    - dbt_utils.unique_combination_of_columns:
+        combination_of_columns:
+        - POSITION_HKEY
+        - LOAD_TS_UTC
+    columns:
+      - name: POSITION_HKEY
+        tests:
+          - not_null
+          - no_hash_collision:
+              hashed_fields: >
+                {{ as_sql_list(['ACCOUNT_CODE', 'SECURITY_CODE']) }}    
+      - name: POSITION_HDIFF
+        tests:
+          - not_null
+          - no_hash_collision:
+              hashed_fields: >
+                {{ as_sql_list(['ACCOUNT_CODE', 'SECURITY_CODE', 'SECURITY_NAME', 'REPORT_DATE', 'QUANTITY',
+                  'COST_BASE', 'POSITION_VALUE', 'CURRENCY_CODE']) }}
+  - name: HIST_ABC_BANK_SECURITY_INFO
+    description: Incremental load of security data into dim
+  - name: HIST_ABC_BANK_POSITION_WITH_CLOSING
+    description: Add a new recored for everyt closed position that has been deleted from source.

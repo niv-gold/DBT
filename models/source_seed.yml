@@ -21,6 +21,6 @@ sources:
     - name: ABC_BANK_CURRENCY_INFO
       description: currencies that the bank is supporting on creating transactions, will be recoerded in the dimension table "DIM_CURRENCY"
     - name: ABC_BANK_EXCHANGE_INFO
-      freshness: null    # no freshness for this table
+      freshness: null    # NULL means freshness check is canceled
       description: securities exchange markets around the world, will be recoerded in the dimension table "DIM_EXCHANGE"
       
