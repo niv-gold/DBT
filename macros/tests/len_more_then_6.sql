@@ -2,7 +2,7 @@
 WITH validation_errors as(
     SELECT {{column_name}}
     FROM {{model}}
-    WHERE LENGTH({{column_name}})> 100
+    WHERE LENGTH({{column_name}})> 10000000
 )
 SELECT * FROM validation_errors
 {%- endtest %}

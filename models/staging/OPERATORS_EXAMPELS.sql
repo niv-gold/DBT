@@ -98,3 +98,5 @@ DATE between '{{start_date}}' and '{{end_date}}'
 
 
 {{as_sql_list(['ACCOUNT_CODE', 'SECURITY_CODE', 'SECURITY_NAME', 'EXCHANGE_CODE', 'REPORT_DATE', 'QUANTITY', 'COST_BASE', 'POSITION_VALUE', 'CURRENCY_CODE'])}}
+
+DROP TABLE IF EXISTS {{target.database}}.{{target.schema}}_REFINED.REF_ABC_BANK_SECURITY_INFO;
