@@ -15,9 +15,9 @@ SELECT '{{ return_str() }}' as greeting
 {% set name = 'Niv' %}
 -- Operators:
 -- passing a variable using () 
-SELECT {{"Welcome {}!".format(name)}}
+SELECT '{{'Welcome ' ~ name }}' as col_1
 -- concatination
-SELECT {{1 ~ " pluse " ~ 2}}{{' equal '}}{{1+2}}
+SELECT '{{1 ~ " pluse " ~ 2}}{{' equal '}}{{1+2}}'
 --is using variables
 {% set var1 = 3 %}
 SELECT {{(var1) is integer}} --1
@@ -44,30 +44,61 @@ SELECT {{"show_me_the_money" | upper | length}}
     "IL" : "Israel",
     "DE" : "Germany"
 } %}
-{% for key, value in dict_1.items() -%}
-    {{ key }}, {{ value }} {% if not loop.last %},{% endif %}
-{%- endfor %}
+WITH country_map(country_code, country_name) AS (
+    SELECT *
+    FROM VALUES
+    {% for key, value in dict_1.items() -%}
+        ('{{ key }}', '{{ value }}'){% if not loop.last %}, {% endif %}
+    {%- endfor %}
+) 
+SELECT *
+FROM country_map
+
+-- exract vales from dictianry sing the dict[value] expression
+{% set dict_1 = {
+    "US" : "United States",
+    "IL" : "Israel",
+    "DE" : "Germany"
+} %}
+WITH country_map(country_name) AS (
+    SELECT *
+    FROM VALUES
+    {% for key in dict_1.keys() -%}
+        ( '{{dict_1[key]}}' ){% if not loop.last %}, {% endif %}
+    {%- endfor %}
+) 
+SELECT *
+FROM country_map
 
 -- using a mutable var inside a for loop with spacename object to append values into list:
+{% set list_1 = [ "United States", "Israel", "Germany"] %}
 {% set ns = namespace(lst_a=[]) %}
-{% for key, value in dict_1.items() -%}
+{% for value in list_1 -%}
     {% do ns.lst_a.append(value) %}
 {%- endfor %}
-{{ns.lst_a}} 
 
--- using a mutable var inside a for loop with spacename object to sume values into list:
-{% set ns = namespace(lst_a=[]) %}
-{% for key, value in dict_1.items() -%}
-    {% do ns.lst_a.append(value) %}
+{% do log('###--> ' ~ ns.lst_a, info=True) %}
+
+WITH value_list(val) as (
+    SELECT *
+    FROM VALUES
+        {% for value in ns.lst_a -%}
+            ('{{value}}') {%if not loop.last %} , {% endif %}
+        {%- endfor %}
+)
+SELECT * FROM value_list
+
+-- using a mutable var inside a for loop with spacename object to sume values in list:
+{% set list_1 = [ 100, 200, 300] %}
+{% set ns = namespace(total=0) %}
+{% for value in list_1 -%}
+    {% set ns.total = ns.total + value %}
 {%- endfor %}
-{{ns.lst_a}} 
+SELECT {{ns.total}} as total
 
+-- working with Pipes
 SELECT '{{dict_1['IL'] | upper}}' as country_name
 SELECT '{{dict_1.IL | lower}}' as country_name
-
-{% for item in dict_1 -%}
-   {{dict_1[item]}} {% if not loop.last %},{% endif %}
-{%- endfor %}
 
 -- List
 {% set lst_1 = ['a','b','c'] %}
@@ -78,23 +109,22 @@ SELECT '{{lst_1[::-1]}}'  --reverce order
 -- IF statement
 {% set var3 = 21 %}
 {% if var3%5 == 0 %}
-    SELECT {{'{} devided by 5'.format(var3)}}
-    SELECT {{var3%5 }} {{var3//5}} -- // print the diviation calc as an integer.
+    -- SELECT '{{var3 ~ ' devided by 5'}}' as col_1
+    SELECT '{{var3%5 }} {{var3//5}}' as col_11 -- // print the diviation calc as an integer.
 {% else %}
-    SELECT {{"{} isnt divided by 5".format(var3)}}
-    SELECT {{var3%5 }} {{var3//5}}
+    -- SELECT '{{var3 ~ " isnt divided by 5"}}'  as col_2
+    SELECT '{{var3%5 }} {{var3//5}}' as col_22
 {% endif %}
 
--- SET variables
-{% set var_a, var_b, var_c = 1, 2, 3 %}
-SELECT {{var_a}}, {{var_b}}, {{var_c}}
 
 -- set a daynamicly pice of code
 {% set start_date, end_date = '2021-01-01', '2025-12-31' %}
-{% set date_filter %}
-DATE between '{{start_date}}' and '{{end_date}}'
-{% endset %}
-{{date_filter}}
+{% set date_filter -%}
+    {{get_today()}} between '{{start_date}}' and '{{end_date}}'
+{%- endset %}
+{% do log('###---> ' ~ date_filter, info=True)%}
+SELECT {{date_filter}} as date_dt
+
 
 
 {{as_sql_list(['ACCOUNT_CODE', 'SECURITY_CODE', 'SECURITY_NAME', 'EXCHANGE_CODE', 'REPORT_DATE', 'QUANTITY', 'COST_BASE', 'POSITION_VALUE', 'CURRENCY_CODE'])}}
